@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MovieCatalogue</string>
+    <string name="search">Search</string>
+    <string name="empty">Movie not found, please try another keyword</string>
+</resources>
