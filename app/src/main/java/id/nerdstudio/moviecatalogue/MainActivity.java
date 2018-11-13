@@ -1,5 +1,9 @@
 package id.nerdstudio.moviecatalogue;
 
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -9,9 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 
-import id.nerdstudio.moviecatalogue.R;
+import java.util.Locale;
+
+import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 import id.nerdstudio.moviecatalogue.fragment.MainFragment;
 import id.nerdstudio.moviecatalogue.fragment.SearchMovieFragment;
 import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
@@ -22,7 +29,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setLanguage();
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.home);
@@ -37,6 +46,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         replaceFragment(new MainFragment());
+    }
+
+    private void setLanguage(){
+        String lang = AppSharedPreferences.getLanguage(this) == null ? "en" : AppSharedPreferences.getLanguage(this);
+        Resources resources = getResources();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        Configuration configuration = resources.getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLocale(new Locale(lang.toLowerCase()));
+        } else {
+            configuration.locale = new Locale(lang);
+        }
+        resources.updateConfiguration(configuration, displayMetrics);
     }
 
     @Override

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Movie Catalogue</string>
     <string name="empty">Movie not found, please try another keyword</string>

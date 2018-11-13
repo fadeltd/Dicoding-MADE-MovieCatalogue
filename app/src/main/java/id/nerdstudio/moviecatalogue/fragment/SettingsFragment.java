@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        String currentLanguage = AppSharedPreferences.getLanguage(getContext()) == null ? "en" : AppSharedPreferences.getLanguage(getContext());
+        final String currentLanguage = AppSharedPreferences.getLanguage(getContext()) == null ? "en" : AppSharedPreferences.getLanguage(getContext());
         TextView languageCurrent = view.findViewById(R.id.language_current);
         languageCurrent.setText(currentLanguage.equals("en") ? "English" : "Bahasa Indonesia");
         ImageView languageIcon = view.findViewById(R.id.language_icon);
@@ -42,9 +42,11 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.language_setting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String lang = AppSharedPreferences.getLanguage(getContext()) == null ? "en" : AppSharedPreferences.getLanguage(getContext());
+                String lang = currentLanguage;
                 if (lang.equals("en")) {
                     lang = "in";
+                } else {
+                    lang = "en";
                 }
                 AppSharedPreferences.putLanguage(getContext(), lang);
 

@@ -13,7 +13,6 @@ import com.koushikdutta.ion.Ion;
 
 import org.joda.time.DateTime;
 
-import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.config.AppConfig;
 import id.nerdstudio.moviecatalogue.model.Movie;
 

@@ -26,6 +26,7 @@ import java.util.List;
 import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.adapter.MovieAdapter;
 import id.nerdstudio.moviecatalogue.config.AppConfig;
+import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 import id.nerdstudio.moviecatalogue.model.Movie;
 import id.nerdstudio.moviecatalogue.util.JsonUtil;
 
@@ -95,8 +96,11 @@ public class MovieListFragment extends Fragment {
         loadingView.setVisibility(View.VISIBLE);
         movieList.clear();
         mAdapter.notifyDataSetChanged();
+        String currentLanguage = AppSharedPreferences.getLanguage(getContext());
+        AppConfig.Language language = currentLanguage == null ? AppConfig.Language.en :
+                currentLanguage.equals("en") ? AppConfig.Language.en : AppConfig.Language.id;
         Ion.with(getActivity())
-                .load(AppConfig.getCurrentMovies(movieType, AppConfig.Language.en))
+                .load(AppConfig.getCurrentMovies(movieType, language))
                 .asJsonObject()
                 .withResponse()
                 .setCallback(new FutureCallback<Response<JsonObject>>() {
