@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Katalog Film</string>
+    <string name="empty">Film tidak dapat ditemukan, silakan gunakan kata kunci lain</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Katalog Film</string>
+    <string name="nav_header_subtitle">didukung oleh www.themoviedb.org</string>
+    <string name="nav_header_desc">Judul Navigasi</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="now_playing">Sedang Tayang</string>
+    <string name="upcoming">Akan Datang</string>
+    <string name="overview">Ikhtisar</string>
+    <string name="detail">Rincian</string>
+    <string name="share">Bagikan</string>
+    <string name="share_body">Hai, lihatlah film keren ini %1$s disini! %2$s melalui Katalog Film</string>
+    <string name="share_view">Bagikan melalui</string>
+    <string name="home">Beranda</string>
+    <string name="search">Pencarian</string>
+    <string name="settings">Pengaturan</string>
+    <string name="language">Bahasa</string>
+</resources>

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -42,18 +43,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Movie movie = data.get(position);
-        Ion.with(context)
-                .load(AppConfig.getPoster(movie.getPosterPath()))
-                .asBitmap()
-                .setCallback(new FutureCallback<Bitmap>() {
-                    @Override
-                    public void onCompleted(Exception e, Bitmap result) {
-                        holder.moviePoster.setImageBitmap(result);
-                    }
-                });
+        if (!movie.getPosterPath().isEmpty()) {
+            Ion.with(context)
+                    .load(AppConfig.getPoster(movie.getPosterPath()))
+                    .asBitmap()
+                    .setCallback(new FutureCallback<Bitmap>() {
+                        @Override
+                        public void onCompleted(Exception e, Bitmap result) {
+                            holder.moviePoster.setImageBitmap(result);
+                        }
+                    });
+        }
         holder.movieTitle.setText(movie.getTitle());
         holder.movieDescription.setText(movie.getOverview());
-        holder.movieReleaseDate.setText(DateTimeFormat.forPattern("DD, dd-MM-yyyy").print(new DateTime(movie.getReleaseDate())));
+        if (!movie.getReleaseDate().isEmpty()) {
+            holder.movieReleaseDate.setText(DateTimeFormat.forPattern("E, dd-MM-yyyy").print(new DateTime(movie.getReleaseDate())));
+        }
     }
 
     @Override
@@ -66,6 +71,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         TextView movieTitle;
         TextView movieDescription;
         TextView movieReleaseDate;
+        LinearLayout movieDetail;
+        LinearLayout movieShare;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,12 +80,27 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             movieTitle = itemView.findViewById(R.id.movie_title);
             movieDescription = itemView.findViewById(R.id.movie_description);
             movieReleaseDate = itemView.findViewById(R.id.movie_release_date);
-            itemView.setOnClickListener(this);
+            movieDetail = itemView.findViewById(R.id.movie_detail);
+            movieShare = itemView.findViewById(R.id.movie_share);
+            movieDetail.setOnClickListener(this);
+            movieShare.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            context.startActivity(new Intent(context, MovieDetailActivity.class).putExtra(MovieDetailActivity.MOVIE_ARGS, data.get(getAdapterPosition())));
+            Movie movie = data.get(getAdapterPosition());
+            switch (view.getId()) {
+                case R.id.movie_detail:
+                    context.startActivity(new Intent(context, MovieDetailActivity.class).putExtra(MovieDetailActivity.MOVIE_ARGS, movie));
+                    break;
+                case R.id.movie_share:
+                    Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    share.putExtra(android.content.Intent.EXTRA_SUBJECT, movie.getTitle());
+                    share.putExtra(android.content.Intent.EXTRA_TEXT, context.getResources().getString(R.string.share_body,  movie.getTitle(), AppConfig.BASE_WEB_URL + movie.getId()));
+                    context.startActivity(Intent.createChooser(share, context.getString(R.string.share_view)));
+                    break;
+            }
         }
     }
 }

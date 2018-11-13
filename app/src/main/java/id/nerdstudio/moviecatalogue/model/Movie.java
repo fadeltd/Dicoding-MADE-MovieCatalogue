@@ -3,6 +3,11 @@ package id.nerdstudio.moviecatalogue.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import id.nerdstudio.moviecatalogue.util.JsonUtil;
+
 public class Movie implements Parcelable {
     private long voteCount;
     private long id;
@@ -64,6 +69,24 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public static Movie fromJson(JsonObject movie) {
+        long voteCount = JsonUtil.getLong(movie, "vote_count");
+        long id = JsonUtil.getLong(movie, "id");
+        boolean video = JsonUtil.getBoolean(movie, "video");
+        float voteAverage = JsonUtil.getFloat(movie, "vote_average");
+        String title = JsonUtil.getString(movie, "title");
+        double popularity = JsonUtil.getDouble(movie, "popularity");
+        String posterPath = JsonUtil.getString(movie, "poster_path");
+        String originalLanguage = JsonUtil.getString(movie, "original_language");
+        String originalTitle = JsonUtil.getString(movie, "original_title");
+        int[] genreIds = JsonUtil.isNotNull(movie, "genre_ids") ? new Gson().fromJson(movie.get("genre_ids"), int[].class) : new int[0];
+        String backdropPath = JsonUtil.getString(movie, "backdrop_path");
+        boolean adult = JsonUtil.getBoolean(movie, "adult");
+        String overview = JsonUtil.getString(movie, "overview");
+        String releaseDate = JsonUtil.getString(movie, "release_date");
+        return new Movie(voteCount, id, video, voteAverage, title, popularity, posterPath, originalLanguage, originalTitle, genreIds, backdropPath, adult, overview, releaseDate);
+    }
 
     public long getVoteCount() {
         return voteCount;

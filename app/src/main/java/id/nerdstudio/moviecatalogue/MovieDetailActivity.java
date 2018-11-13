@@ -2,7 +2,6 @@ package id.nerdstudio.moviecatalogue;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -14,6 +13,7 @@ import com.koushikdutta.ion.Ion;
 
 import org.joda.time.DateTime;
 
+import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.config.AppConfig;
 import id.nerdstudio.moviecatalogue.model.Movie;
 
@@ -33,21 +33,23 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         movie = getIntent().getParcelableExtra(MOVIE_ARGS);
         if (movie != null) {
-            final ImageView moviePoster = findViewById(R.id.movie_poster);
-            Ion.with(this)
-                    .load(AppConfig.getPoster(movie.getPosterPath()))
-                    .asBitmap()
-                    .setCallback(new FutureCallback<Bitmap>() {
-                        @Override
-                        public void onCompleted(Exception e, Bitmap result) {
-                            moviePoster.setImageBitmap(result);
-                        }
-                    });
+            if(!movie.getPosterPath().isEmpty()) {
+                final ImageView moviePoster = findViewById(R.id.movie_poster);
+                Ion.with(this)
+                        .load(AppConfig.getPoster(movie.getPosterPath()))
+                        .asBitmap()
+                        .setCallback(new FutureCallback<Bitmap>() {
+                            @Override
+                            public void onCompleted(Exception e, Bitmap result) {
+                                moviePoster.setImageBitmap(result);
+                            }
+                        });
+            }
             TextView movieTitle = findViewById(R.id.movie_title);
             movieTitle.setText(movie.getTitle());
             actionBar.setTitle(movie.getTitle());
             TextView movieYear = findViewById(R.id.movie_year);
-            String year = "(" + new DateTime(movie.getReleaseDate()).getYear() + ")";
+            String year = !movie.getReleaseDate().isEmpty() ? "(" + new DateTime(movie.getReleaseDate()).getYear() + ")" : "";
             movieYear.setText(year);
             TextView movieDescription = findViewById(R.id.movie_description);
             movieDescription.setText(movie.getOverview());

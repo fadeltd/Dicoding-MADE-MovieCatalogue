@@ -1,135 +1,81 @@
 package id.nerdstudio.moviecatalogue;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.Response;
+import id.nerdstudio.moviecatalogue.R;
+import id.nerdstudio.moviecatalogue.fragment.MainFragment;
+import id.nerdstudio.moviecatalogue.fragment.SearchMovieFragment;
+import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import id.nerdstudio.moviecatalogue.adapter.MovieAdapter;
-import id.nerdstudio.moviecatalogue.config.AppConfig;
-import id.nerdstudio.moviecatalogue.model.Movie;
-import id.nerdstudio.moviecatalogue.util.JsonUtil;
-
-public class MainActivity extends AppCompatActivity {
-
-    private RecyclerView mRecyclerView;
-    private MovieAdapter mAdapter;
-    private List<Movie> movieList = new ArrayList<>();
-    private View root;
-    private ProgressBar loadingView;
-    private EditText searchInput;
-    private TextView emptyList;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        root = findViewById(android.R.id.content);
-        loadingView = findViewById(R.id.loading_view);
-        emptyList = findViewById(R.id.empty_list);
-        searchInput = findViewById(R.id.search_input);
-        searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    fetchData(textView.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
-        findViewById(R.id.search_icon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fetchData(searchInput.getText().toString());
-            }
-        });
-        mAdapter = new MovieAdapter(this, movieList);
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setHasFixedSize(true);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle(R.string.home);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        replaceFragment(new MainFragment());
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        ((SearchView) menu.findItem(R.id.action_search).getActionView()).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                fetchData(newText);
-//                return false;
-//            }
-//        });
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-    private void fetchData(String query) {
-        loadingView.setVisibility(View.VISIBLE);
-        movieList.clear();
-        mAdapter.notifyDataSetChanged();
-        Ion
-                .with(this)
-                .load(AppConfig.withQuery(query))
-                .asJsonObject()
-                .withResponse()
-                .setCallback(new FutureCallback<Response<JsonObject>>() {
-                    @Override
-                    public void onCompleted(Exception e, Response<JsonObject> response) {
-                        loadingView.setVisibility(View.GONE);
-                        if (e != null) {
-                            Snackbar.make(root, e.getMessage(), Snackbar.LENGTH_INDEFINITE).show();
-                        } else {
-                            JsonObject result = response.getResult();
-                            if (JsonUtil.isNotNull("results", result)) {
-                                JsonArray movies = result.get("results").getAsJsonArray();
-                                for (int i = 0; i < movies.size(); i++) {
-                                    JsonObject movie = movies.get(i).getAsJsonObject();
-                                    long voteCount = movie.get("vote_count").getAsLong();
-                                    long id = movie.get("id").getAsLong();
-                                    boolean video = movie.get("video").getAsBoolean();
-                                    float voteAverage = movie.get("vote_average").getAsFloat();
-                                    String title = movie.get("title").getAsString();
-                                    double popularity = movie.get("popularity").getAsDouble();
-                                    String posterPath = movie.get("poster_path").getAsString();
-                                    String originalLanguage = movie.get("original_language").getAsString();
-                                    String originalTitle = movie.get("original_title").getAsString();
-                                    int[] genreIds = new Gson().fromJson(movie.get("genre_ids"), int[].class);
-                                    String backdropPath = movie.get("backdrop_path").getAsString();
-                                    boolean adult = movie.get("adult").getAsBoolean();
-                                    String overview = movie.get("overview").getAsString();
-                                    String releaseDate = movie.get("release_date").getAsString();
-                                    movieList.add(new Movie(voteCount, id, video, voteAverage, title, popularity, posterPath, originalLanguage, originalTitle, genreIds, backdropPath, adult, overview, releaseDate));
-                                }
-                                mAdapter.notifyDataSetChanged();
-                                emptyList.setVisibility(View.GONE);
-                            }else{
-                                emptyList.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }
-                });
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        Fragment fragment = new MainFragment();
+        switch(item.getItemId()){
+            case R.id.nav_home:
+                fragment = new MainFragment();
+                break;
+            case R.id.nav_search:
+                fragment = new SearchMovieFragment();
+                break;
+            case R.id.nav_settings:
+                fragment = new SettingsFragment();
+                break;
+        }
+        setTitle(item.getTitle());
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        replaceFragment(fragment);
+        
+        return true;
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
     }
 }

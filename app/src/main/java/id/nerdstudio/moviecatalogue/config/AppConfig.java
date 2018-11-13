@@ -1,11 +1,27 @@
 package id.nerdstudio.moviecatalogue.config;
 
+import id.nerdstudio.moviecatalogue.BuildConfig;
+
 public class AppConfig {
-    private static final String API_KEY = "f6f7eb9cb35e30e786faa519f685b4b2";
-    private static final String BASE_URL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=";
+    private static final String API_KEY = BuildConfig.API_KEY;
+    private static final String BASE_URL = BuildConfig.BASE_URL;
+    public static final String BASE_WEB_URL = "https://www.themoviedb.org/movie/";
+    private static final String SEARCH_MOVIE = BASE_URL + "search/movie?api_key=" + API_KEY + "&language=en-US&query=";
+
+    public enum CurrentMovieType {
+        now_playing, upcoming
+    }
+
+    public enum Language {
+        en, id
+    }
+
+    public static String getCurrentMovies(CurrentMovieType type, Language language){
+        return BASE_URL + "movie/"+ type.name() + "?api_key=" + API_KEY + "&language="+language.name();
+    }
 
     public static String withQuery(String query) {
-        return BASE_URL + query;
+        return SEARCH_MOVIE + query;
     }
 
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
