@@ -2,8 +2,10 @@ package id.nerdstudio.moviecatalogue;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +28,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -44,12 +48,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                             }
                         });
             }
-            TextView movieTitle = findViewById(R.id.movie_title);
-            movieTitle.setText(movie.getTitle());
-            actionBar.setTitle(movie.getTitle());
-            TextView movieYear = findViewById(R.id.movie_year);
+//            TextView movieTitle = findViewById(R.id.movie_title);
+//            movieTitle.setText(movie.getTitle());
+//            actionBar.setTitle(movie.getTitle());
+//            TextView movieYear = findViewById(R.id.movie_year);
             String year = !movie.getReleaseDate().isEmpty() ? "(" + new DateTime(movie.getReleaseDate()).getYear() + ")" : "";
-            movieYear.setText(year);
+//            movieYear.setText(year);
+            actionBar.setTitle(movie.getTitle() +" "+ year);
             TextView movieDescription = findViewById(R.id.movie_description);
             movieDescription.setText(movie.getOverview());
         }

@@ -36,7 +36,7 @@ public class SearchMovieFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mAdapter;
-    private List<Movie> movieList;
+    private ArrayList<Movie> movieList;
     private View root;
     private ProgressBar loadingView;
     private EditText searchInput;
@@ -87,24 +87,6 @@ public class SearchMovieFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_search, menu);
-//        ((SearchView) menu.findItem(R.id.action_search).getActionView()).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                fetchData(newText);
-//                return false;
-//            }
-//        });
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
     private void fetchData(String query) {
         loadingView.setVisibility(View.VISIBLE);
         movieList.clear();
@@ -139,5 +121,21 @@ public class SearchMovieFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            searchInput.setText(savedInstanceState.getString("searchInput"));
+            fetchData(searchInput.getText().toString());
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("searchInput", searchInput.getText().toString());
     }
 }

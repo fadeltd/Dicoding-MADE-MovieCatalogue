@@ -26,15 +26,20 @@ import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    Fragment mContent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setLanguage();
+        setLanguage(false);
         setContentView(R.layout.activity_main);
-
+        if (savedInstanceState != null) {
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "fragment");
+        } else {
+            mContent = new MainFragment();
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(R.string.home);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -45,10 +50,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        replaceFragment(new MainFragment());
+
+        if (mContent instanceof MainFragment) {
+            setTitle(R.string.home);
+            navigationView.setCheckedItem(R.id.nav_home);
+        } else if (mContent instanceof SearchMovieFragment) {
+            setTitle(R.string.search);
+            navigationView.setCheckedItem(R.id.nav_search);
+        } else if (mContent instanceof SettingsFragment) {
+            setTitle(R.string.settings);
+            navigationView.setCheckedItem(R.id.nav_settings);
+        }
+        replaceFragment(mContent);
     }
 
-    private void setLanguage(){
+    public void setLanguage(boolean restartActivity) {
         String lang = AppSharedPreferences.getLanguage(this) == null ? "en" : AppSharedPreferences.getLanguage(this);
         Resources resources = getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
@@ -59,6 +75,15 @@ public class MainActivity extends AppCompatActivity
             configuration.locale = new Locale(lang);
         }
         resources.updateConfiguration(configuration, displayMetrics);
+        if (restartActivity) {
+            restartActivity();
+        }
+    }
+
+    private void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     @Override
@@ -74,24 +99,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
-        Fragment fragment = new MainFragment();
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_home:
-                fragment = new MainFragment();
+                mContent = new MainFragment();
                 break;
             case R.id.nav_search:
-                fragment = new SearchMovieFragment();
+                mContent = new SearchMovieFragment();
                 break;
             case R.id.nav_settings:
-                fragment = new SettingsFragment();
+                mContent = new SettingsFragment();
                 break;
         }
         setTitle(item.getTitle());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        replaceFragment(fragment);
-        
+        replaceFragment(mContent);
+
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, "fragment", mContent);
     }
 
     public void replaceFragment(Fragment fragment) {

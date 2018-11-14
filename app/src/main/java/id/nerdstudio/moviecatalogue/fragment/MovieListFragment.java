@@ -7,7 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.adapter.MovieAdapter;
@@ -35,7 +33,7 @@ public class MovieListFragment extends Fragment {
     public static final int NOW_PLAYING = 0;
     public static final int UPCOMING = 1;
     private AppConfig.CurrentMovieType movieType;
-    private List<Movie> movieList;
+    private ArrayList<Movie> movieList;
     private RecyclerView mRecyclerView;
     private MovieAdapter mAdapter;
     private ProgressBar loadingView;
@@ -125,5 +123,21 @@ public class MovieListFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // movieList = savedInstanceState.getParcelableArrayList("movieList");
+            fetchData();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // outState.putParcelableArrayList("movieList", movieList);
     }
 }

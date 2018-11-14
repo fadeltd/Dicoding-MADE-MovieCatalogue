@@ -1,20 +1,14 @@
 package id.nerdstudio.moviecatalogue.fragment;
 
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Locale;
-
+import id.nerdstudio.moviecatalogue.MainActivity;
 import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 
@@ -50,19 +44,7 @@ public class SettingsFragment extends Fragment {
                 }
                 AppSharedPreferences.putLanguage(getContext(), lang);
 
-                Resources resources = getActivity().getResources();
-                DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-                Configuration configuration = resources.getConfiguration();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    configuration.setLocale(new Locale(lang.toLowerCase()));
-                } else {
-                    configuration.locale = new Locale(lang);
-                }
-                resources.updateConfiguration(configuration, displayMetrics);
-
-                Intent intent = getActivity().getIntent();
-                getActivity().finish();
-                startActivity(intent);
+                ((MainActivity)getActivity()).setLanguage(true);
             }
         });
         return view;
