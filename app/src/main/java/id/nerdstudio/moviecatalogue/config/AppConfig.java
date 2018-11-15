@@ -34,7 +34,7 @@ public class AppConfig {
         return getPoster(PosterType.original, path);
     }
 
-    public static String getPoster(PosterType type, String path) {
+    private static String getPoster(PosterType type, String path) {
         return BASE_IMAGE_URL + type.name() + "/" + path;
     }
 }

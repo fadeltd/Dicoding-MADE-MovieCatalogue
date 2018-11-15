@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import java.util.Locale;
 
 import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
+import id.nerdstudio.moviecatalogue.fragment.FavoriteFragment;
 import id.nerdstudio.moviecatalogue.fragment.MainFragment;
 import id.nerdstudio.moviecatalogue.fragment.SearchMovieFragment;
 import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
@@ -26,7 +27,8 @@ import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Fragment mContent;
+    private Fragment mContent;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +49,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         if (mContent instanceof MainFragment) {
             setTitle(R.string.home);
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity
         } else if (mContent instanceof SearchMovieFragment) {
             setTitle(R.string.search);
             navigationView.setCheckedItem(R.id.nav_search);
+        } else if (mContent instanceof FavoriteFragment) {
+            setTitle(R.string.favorite);
+            navigationView.setCheckedItem(R.id.nav_favorite);
         } else if (mContent instanceof SettingsFragment) {
             setTitle(R.string.settings);
             navigationView.setCheckedItem(R.id.nav_settings);
@@ -106,8 +110,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_search:
                 mContent = new SearchMovieFragment();
                 break;
+            case R.id.nav_favorite:
+                mContent = new FavoriteFragment();
+                break;
             case R.id.nav_settings:
                 mContent = new SettingsFragment();
+                navigationView.setCheckedItem(R.id.nav_settings);
                 break;
         }
         setTitle(item.getTitle());
@@ -116,6 +124,15 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(mContent);
 
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mContent instanceof FavoriteFragment){
+            mContent = new FavoriteFragment();
+            replaceFragment(mContent);
+        }
     }
 
     @Override

@@ -34,7 +34,6 @@ public class MovieListFragment extends Fragment {
     public static final int UPCOMING = 1;
     private AppConfig.CurrentMovieType movieType;
     private ArrayList<Movie> movieList;
-    private RecyclerView mRecyclerView;
     private MovieAdapter mAdapter;
     private ProgressBar loadingView;
     private TextView emptyList;
@@ -69,7 +68,7 @@ public class MovieListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_movie_list, container, false);
@@ -77,7 +76,7 @@ public class MovieListFragment extends Fragment {
         mAdapter = new MovieAdapter(getActivity(), movieList);
         loadingView = root.findViewById(R.id.loading_view);
         emptyList = root.findViewById(R.id.empty_list);
-        mRecyclerView = root.findViewById(R.id.recycler_view);
+        RecyclerView mRecyclerView = root.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
@@ -136,7 +135,7 @@ public class MovieListFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // outState.putParcelableArrayList("movieList", movieList);
     }

@@ -3,6 +3,8 @@
     package="id.nerdstudio.moviecatalogue">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission android:name="id.nerdstudio.moviecatalogue.READ_DATABASE" android:protectionLevel="normal" />
+    <permission android:name="id.nerdstudio.moviecatalogue.WRITE_DATABASE" android:protectionLevel="normal" />
 
     <application
         android:allowBackup="true"
@@ -21,6 +23,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetailActivity" />
+        <provider
+            android:authorities="id.nerdstudio.moviecatalogue"
+            android:name=".provider.MovieProvider"
+            android:exported="true"
+            android:readPermission="id.nerdstudio.moviecatalogue.READ_DATABASE"
+            android:writePermission="id.nerdstudio.moviecatalogue.WRITE_DATABASE" />
     </application>
 
 </manifest>

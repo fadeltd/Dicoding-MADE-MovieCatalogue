@@ -6,7 +6,9 @@
     <string name="nav_header_title">Katalog Film</string>
     <string name="nav_header_subtitle">didukung oleh www.themoviedb.org</string>
     <string name="nav_header_desc">Judul Navigasi</string>
+    <string name="action_favorite">Favorite</string>
     <string name="action_settings">Pengaturan</string>
+    <string name="action_share">Bagikan</string>
     <string name="now_playing">Sedang Tayang</string>
     <string name="upcoming">Akan Datang</string>
     <string name="overview">Ikhtisar</string>
@@ -18,4 +20,11 @@
     <string name="search">Pencarian</string>
     <string name="settings">Pengaturan</string>
     <string name="language">Bahasa</string>
+    <string name="preferences">Preferensi</string>
+    <string name="favorite">Favorit</string>
+    <string name="release_date">Tanggal rilis</string>
+    <string name="rating">Rating</string>
+    <string name="success_favorite">Berhasil menambahkan %1$s ke daftar favorit</string>
+    <string name="success_delete_favorite">Berhasil menghapus %1$s dari daftar favorit</string>
+    <string name="empty_favorite">Belum menambahkan film apapun ke daftar favorit</string>
 </resources>

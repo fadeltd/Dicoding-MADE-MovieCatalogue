@@ -6,16 +6,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -23,7 +20,6 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import id.nerdstudio.moviecatalogue.R;
 import id.nerdstudio.moviecatalogue.adapter.MovieAdapter;
@@ -34,12 +30,11 @@ import id.nerdstudio.moviecatalogue.util.JsonUtil;
 
 public class SearchMovieFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
     private MovieAdapter mAdapter;
     private ArrayList<Movie> movieList;
     private View root;
     private ProgressBar loadingView;
-    private EditText searchInput;
+    private SearchView searchInput;
     private TextView emptyList;
 
     public SearchMovieFragment() {
@@ -61,25 +56,27 @@ public class SearchMovieFragment extends Fragment {
         loadingView = view.findViewById(R.id.loading_view);
         emptyList = view.findViewById(R.id.empty_list);
         searchInput = view.findViewById(R.id.search_input);
-        searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        searchInput.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    fetchData(textView.getText().toString());
-                    return true;
-                }
-                return false;
+            public void onClick(View v) {
+                searchInput.setIconified(false);
             }
         });
-        view.findViewById(R.id.search_icon).setOnClickListener(new View.OnClickListener() {
+        searchInput.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View view) {
-                fetchData(searchInput.getText().toString());
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                fetchData(query);
+                return false;
             }
         });
         movieList = new ArrayList<>();
         mAdapter = new MovieAdapter(getActivity(), movieList);
-        mRecyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setHasFixedSize(true);
@@ -128,14 +125,13 @@ public class SearchMovieFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            searchInput.setText(savedInstanceState.getString("searchInput"));
-            fetchData(searchInput.getText().toString());
+            searchInput.setQuery(savedInstanceState.getString("searchInput"), false);
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("searchInput", searchInput.getText().toString());
+        outState.putString("searchInput", searchInput.getQuery().toString());
     }
 }

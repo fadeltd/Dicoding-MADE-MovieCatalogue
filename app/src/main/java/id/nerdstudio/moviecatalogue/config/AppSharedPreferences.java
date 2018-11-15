@@ -15,14 +15,14 @@ public class AppSharedPreferences {
         return readString(context, LANGUAGE);
     }
 
-    public static void saveString(Context context, String key, String value) {
+    private static void saveString(Context context, String key, String value) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(key, value);
         editor.apply();
     }
 
-    public static String readString(Context context, String key) {
+    private static String readString(Context context, String key) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
 

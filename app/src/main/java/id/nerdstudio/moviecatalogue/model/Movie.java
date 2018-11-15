@@ -1,5 +1,6 @@
 package id.nerdstudio.moviecatalogue.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,6 +8,26 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import id.nerdstudio.moviecatalogue.util.JsonUtil;
+
+import static android.provider.BaseColumns._ID;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.ADULT;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.BACKDROP_PATH;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.GENRE_IDS;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.ORIGINAL_LANGUAGE;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.ORIGINAL_TITLE;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.OVERVIEW;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.POPULARITY;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.POSTER_PATH;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.RELEASE_DATE;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.TITLE;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.VIDEO;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.VOTE_AVERAGE;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.MovieColumns.VOTE_COUNT;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.getColumnBoolean;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.getColumnDouble;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.getColumnFloat;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.getColumnLong;
+import static id.nerdstudio.moviecatalogue.database.DatabaseContract.getColumnString;
 
 public class Movie implements Parcelable {
     private long voteCount;
@@ -24,7 +45,7 @@ public class Movie implements Parcelable {
     private String overview;
     private String releaseDate;
 
-    public Movie(long voteCount, long id, boolean video, float voteAverage, String title, double popularity, String posterPath, String originalLanguage, String originalTitle, int[] genreIds, String backdropPath, boolean adult, String overview, String releaseDate) {
+    private Movie(long voteCount, long id, boolean video, float voteAverage, String title, double popularity, String posterPath, String originalLanguage, String originalTitle, int[] genreIds, String backdropPath, boolean adult, String overview, String releaseDate) {
         this.voteCount = voteCount;
         this.id = id;
         this.video = video;
@@ -56,6 +77,28 @@ public class Movie implements Parcelable {
         adult = in.readByte() != 0;
         overview = in.readString();
         releaseDate = in.readString();
+    }
+
+    public Movie(Cursor cursor) {
+        this.voteCount = getColumnLong(cursor, VOTE_COUNT);
+        this.id = getColumnLong(cursor, _ID);
+        this.video =  getColumnBoolean(cursor, VIDEO);
+        this.voteAverage =  getColumnFloat(cursor, VOTE_AVERAGE);
+        this.title = getColumnString(cursor, TITLE);
+        this.popularity = getColumnDouble(cursor, POPULARITY);
+        this.posterPath = getColumnString(cursor, POSTER_PATH);
+        this.originalLanguage = getColumnString(cursor, ORIGINAL_LANGUAGE);
+        this.originalTitle = getColumnString(cursor, ORIGINAL_TITLE);
+        String[] stream = getColumnString(cursor, GENRE_IDS).split(",");
+        this.genreIds = new int[stream.length];
+        for (int i = 0; i < this.genreIds.length; i++) {
+            this.genreIds[i] = Integer.parseInt(stream[i]);
+        }
+        this.backdropPath = getColumnString(cursor, BACKDROP_PATH);
+        this.adult = getColumnBoolean(cursor, ADULT);
+        this.overview = getColumnString(cursor, OVERVIEW);
+        this.releaseDate = getColumnString(cursor, RELEASE_DATE);
+
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

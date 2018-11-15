@@ -1,7 +1,8 @@
 package id.nerdstudio.moviecatalogue.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,6 @@ import com.koushikdutta.ion.Ion;
 
 import org.joda.time.DateTime;
 
-import java.util.List;
 import java.util.Locale;
 
 import id.nerdstudio.moviecatalogue.MovieDetailActivity;
@@ -26,26 +26,26 @@ import id.nerdstudio.moviecatalogue.config.AppConfig;
 import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 import id.nerdstudio.moviecatalogue.model.Movie;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
-    private Context context;
-    private List<Movie> data;
+public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdapter.ViewHolder> {
+    private Activity activity;
+    private Cursor movieList;
 
-    public MovieAdapter(Context context, List<Movie> data) {
-        this.context = context;
-        this.data = data;
+    public FavoriteMovieAdapter(Activity activity) {
+        this.activity = activity;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int itemType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false));
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(activity).inflate(R.layout.item_movie, parent, false));
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        Movie movie = data.get(position);
+    public void onBindViewHolder(final @NonNull ViewHolder holder, int position) {
+        Movie movie = getItem(position);
         if (!movie.getPosterPath().isEmpty()) {
-            Ion.with(context)
+            Ion.with(activity)
                     .load(AppConfig.getPoster(movie.getPosterPath()))
                     .asBitmap()
                     .setCallback(new FutureCallback<Bitmap>() {
@@ -59,14 +59,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         holder.movieDescription.setText(movie.getOverview());
         if (!movie.getReleaseDate().isEmpty()) {
             holder.movieReleaseDate.setText(new DateTime(movie.getReleaseDate()).toString("E, dd-MM-yyyy",
-                    AppSharedPreferences.getLanguage(context) == null ? Locale.ENGLISH : new Locale(AppSharedPreferences.getLanguage(context))
+                    AppSharedPreferences.getLanguage(activity) == null ? Locale.ENGLISH : new Locale(AppSharedPreferences.getLanguage(activity))
             ));
         }
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        if (movieList == null) return 0;
+        return movieList.getCount();
+    }
+
+    private Movie getItem(int position) {
+        if (!movieList.moveToPosition(position)) {
+            throw new IllegalStateException("Position invalid");
+        }
+        return new Movie(movieList);
+    }
+
+    public void setMovieList(Cursor movieList) {
+        this.movieList = movieList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -93,19 +105,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            Movie movie = data.get(getAdapterPosition());
+            Movie movie = getItem(getAdapterPosition());
             switch (view.getId()) {
                 case R.id.movie_share:
                     Intent share = new Intent(android.content.Intent.ACTION_SEND);
                     share.setType("text/plain");
                     share.putExtra(android.content.Intent.EXTRA_SUBJECT, movie.getTitle());
-                    share.putExtra(android.content.Intent.EXTRA_TEXT, context.getResources().getString(R.string.share_body, movie.getTitle(), AppConfig.BASE_WEB_URL + movie.getId()));
-                    context.startActivity(Intent.createChooser(share, context.getString(R.string.share_view)));
+                    share.putExtra(android.content.Intent.EXTRA_TEXT, activity.getResources().getString(R.string.share_body, movie.getTitle(), AppConfig.BASE_WEB_URL + movie.getId()));
+                    activity.startActivity(Intent.createChooser(share, activity.getString(R.string.share_view)));
                     break;
                 default:
-                    context.startActivity(new Intent(context, MovieDetailActivity.class).putExtra(MovieDetailActivity.MOVIE_ARGS, movie));
+                    activity.startActivityForResult (new Intent(activity, MovieDetailActivity.class).putExtra(MovieDetailActivity.MOVIE_ARGS, movie), MovieDetailActivity.FAVORITE);
                     break;
             }
         }
     }
 }
+
