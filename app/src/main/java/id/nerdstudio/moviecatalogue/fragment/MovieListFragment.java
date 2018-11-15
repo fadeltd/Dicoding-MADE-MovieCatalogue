@@ -129,7 +129,6 @@ public class MovieListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            // movieList = savedInstanceState.getParcelableArrayList("movieList");
             fetchData();
         }
     }
@@ -137,6 +136,5 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        // outState.putParcelableArrayList("movieList", movieList);
     }
 }
