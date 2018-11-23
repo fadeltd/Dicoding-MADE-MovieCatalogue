@@ -3,8 +3,15 @@
     package="id.nerdstudio.moviecatalogue">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <permission android:name="id.nerdstudio.moviecatalogue.READ_DATABASE" android:protectionLevel="normal" />
-    <permission android:name="id.nerdstudio.moviecatalogue.WRITE_DATABASE" android:protectionLevel="normal" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <permission
+        android:name="id.nerdstudio.moviecatalogue.READ_DATABASE"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="id.nerdstudio.moviecatalogue.WRITE_DATABASE"
+        android:protectionLevel="normal" />
 
     <application
         android:allowBackup="true"
@@ -23,12 +30,31 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetailActivity" />
+
         <provider
-            android:authorities="id.nerdstudio.moviecatalogue"
             android:name=".provider.MovieProvider"
+            android:authorities="id.nerdstudio.moviecatalogue"
             android:exported="true"
             android:readPermission="id.nerdstudio.moviecatalogue.READ_DATABASE"
             android:writePermission="id.nerdstudio.moviecatalogue.WRITE_DATABASE" />
+
+        <receiver android:name=".MovieCatalogueWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/movie_catalogue_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".config.AlarmReceiver"
+            android:enabled="true" />
+
+        <service
+            android:name=".StackWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
     </application>
 
 </manifest>

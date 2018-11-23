@@ -18,38 +18,45 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 import id.nerdstudio.moviecatalogue.fragment.FavoriteFragment;
 import id.nerdstudio.moviecatalogue.fragment.MainFragment;
 import id.nerdstudio.moviecatalogue.fragment.SearchMovieFragment;
 import id.nerdstudio.moviecatalogue.fragment.SettingsFragment;
+import id.nerdstudio.moviecatalogue.util.AlarmUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Fragment mContent;
-    private NavigationView navigationView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setLanguage(false);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
         if (savedInstanceState != null) {
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "fragment");
         } else {
             mContent = new MainFragment();
         }
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         if (mContent instanceof MainFragment) {
@@ -59,13 +66,19 @@ public class MainActivity extends AppCompatActivity
             setTitle(R.string.search);
             navigationView.setCheckedItem(R.id.nav_search);
         } else if (mContent instanceof FavoriteFragment) {
-            setTitle(R.string.favorite);
+            setTitle(R.string.action_favorite);
             navigationView.setCheckedItem(R.id.nav_favorite);
         } else if (mContent instanceof SettingsFragment) {
             setTitle(R.string.settings);
             navigationView.setCheckedItem(R.id.nav_settings);
         }
         replaceFragment(mContent);
+
+        if (AppSharedPreferences.getReminderEnabled(this)) {
+            AlarmUtil.setReminder(this);
+        } else{
+            AlarmUtil.cancelReminder(this);
+        }
     }
 
     public void setLanguage(boolean restartActivity) {
@@ -92,7 +105,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -114,11 +126,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 mContent = new SettingsFragment();
-                navigationView.setCheckedItem(R.id.nav_settings);
                 break;
         }
+
         setTitle(item.getTitle());
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         replaceFragment(mContent);
 
@@ -128,7 +139,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(mContent instanceof FavoriteFragment){
+        if (mContent instanceof FavoriteFragment) {
             mContent = new FavoriteFragment();
             replaceFragment(mContent);
         }

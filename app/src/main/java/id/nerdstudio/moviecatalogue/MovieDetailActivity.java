@@ -25,6 +25,8 @@ import org.joda.time.DateTime;
 
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import id.nerdstudio.moviecatalogue.config.AppConfig;
 import id.nerdstudio.moviecatalogue.config.AppSharedPreferences;
 import id.nerdstudio.moviecatalogue.database.MovieHelper;
@@ -53,15 +55,26 @@ public class MovieDetailActivity extends AppCompatActivity {
     private Movie movie;
     private MovieHelper movieHelper;
     private Menu menu;
-    private FloatingActionButton floatingActionButton;
     private boolean isFavorite = false;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.movie_poster)
+    ImageView moviePoster;
+    @BindView(R.id.movie_description)
+    TextView movieDescription;
+    @BindView(R.id.movie_release_date)
+    TextView movieReleaseDate;
+    @BindView(R.id.movie_rating)
+    TextView movieRating;
+    @BindView(R.id.movie_favorite)
+    FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -76,17 +89,14 @@ public class MovieDetailActivity extends AppCompatActivity {
             if (cursor != null) {
                 isFavorite = cursor.getCount() > 0;
             }
-            TextView movieReleaseDate = findViewById(R.id.movie_release_date);
             if (!movie.getReleaseDate().isEmpty()) {
                 movieReleaseDate.setText(new DateTime(movie.getReleaseDate()).toString("E, dd-MM-yyyy",
                         AppSharedPreferences.getLanguage(this) == null ? Locale.ENGLISH : new Locale(AppSharedPreferences.getLanguage(this))
                 ));
             }
 
-            TextView movieRating = findViewById(R.id.movie_rating);
             movieRating.setText(String.valueOf(movie.getVoteAverage()));
             if (!movie.getPosterPath().isEmpty()) {
-                final ImageView moviePoster = findViewById(R.id.movie_poster);
                 Ion.with(this)
                         .load(AppConfig.getPoster(movie.getPosterPath()))
                         .asBitmap()
@@ -99,11 +109,9 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
             String year = !movie.getReleaseDate().isEmpty() ? "(" + new DateTime(movie.getReleaseDate()).getYear() + ")" : "";
             actionBar.setTitle(movie.getTitle() + " " + year);
-            TextView movieDescription = findViewById(R.id.movie_description);
             movieDescription.setText(movie.getOverview());
         }
 
-        floatingActionButton = findViewById(R.id.movie_favorite);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

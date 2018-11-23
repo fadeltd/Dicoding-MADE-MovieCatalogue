@@ -21,10 +21,18 @@
     <string name="settings">Pengaturan</string>
     <string name="language">Bahasa</string>
     <string name="preferences">Preferensi</string>
-    <string name="favorite">Favorit</string>
     <string name="release_date">Tanggal rilis</string>
     <string name="rating">Rating</string>
     <string name="success_favorite">Berhasil menambahkan %1$s ke daftar favorit</string>
     <string name="success_delete_favorite">Berhasil menghapus %1$s dari daftar favorit</string>
     <string name="empty_favorite">Belum menambahkan film apapun ke daftar favorit</string>
+    <string name="favorite_movie">Film Favorit</string>
+    <string name="add_widget">Tambahkan widget</string>
+    <string name="movie_catalogue_daily_reminder">Hai, Selamat Pagi! Sudahkah Anda melihat katalog film hari ini?</string>
+    <string name="movie_release_today" >Film %1$s rilis hari ini</string>
+    <string name="movie_release_info">Latest Movie Release</string>
+    <string name="no_movie_release_today" >No Movie is released toady</string>
+    <string name="reminder">Pengingat harian</string>
+    <string name="on">Aktif</string>
+    <string name="off">Mati</string>
 </resources>

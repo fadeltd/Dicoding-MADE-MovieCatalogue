@@ -1,36 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/language_setting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true"
+    android:orientation="vertical"
     android:padding="16dp"
     tools:context=".fragment.SettingsFragment">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/language_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/language"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textStyle="bold" />
+        android:clickable="true"
+        android:focusable="true">
 
-    <ImageView
-        android:id="@+id/language_icon"
-        android:layout_width="24dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_toStartOf="@+id/language_current"
-        android:layout_toLeftOf="@+id/language_current"
-        app:srcCompat="@drawable/ic_flag_usa" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/language"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/language_current"
+        <ImageView
+            android:id="@+id/language_icon"
+            android:layout_width="24dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_toStartOf="@+id/language_current"
+            android:layout_toLeftOf="@+id/language_current"
+            app:srcCompat="@drawable/ic_flag_usa" />
+
+        <TextView
+            android:id="@+id/language_current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            tools:text="English" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="English" />
-</RelativeLayout>
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reminder"
+            android:layout_centerVertical="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textStyle="bold" />
+
+        <ToggleButton
+            android:id="@+id/daily_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textOff="@string/off"
+            android:textOn="@string/on" />
+
+    </RelativeLayout>
+
+</LinearLayout>
